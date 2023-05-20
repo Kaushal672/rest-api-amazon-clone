@@ -11,3 +11,16 @@ exports.getProducts = async (req, res) => {
         .limit(perPage);
     res.status(200).json({ products, count });
 };
+
+exports.addProduct = async (req, res) => {
+    const { title, description, price, imageUrl } = req.body;
+    const product = new Product({
+        title,
+        description,
+        price,
+        imageUrl,
+    });
+
+    await product.save();
+    res.status(201).json({ message: 'Product added successfully', product });
+};

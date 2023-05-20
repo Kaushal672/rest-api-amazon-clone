@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 
+app.use(express.json());
 app.use('/products', productsRoute);
 
 app.use((err, req, res, _next) => {
