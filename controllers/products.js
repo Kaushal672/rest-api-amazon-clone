@@ -1,4 +1,5 @@
 const Product = require('../model/products');
+const { cloudinary } = require('../cloudinary/index');
 
 exports.getProducts = async (req, res) => {
     const { page = 1 } = req.query;
@@ -13,14 +14,16 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-    console.log('Inside controller');
     const { title, description, price } = req.body;
     const product = new Product({
         title,
         description,
         price,
     });
-    product.imageUrl = req.files[0].path;
+    product.images = req.files.map((f) => ({
+        url: f.path,
+        filename: f.filename,
+    }));
 
     await product.save();
     res.status(201).json({ message: 'Product added successfully', product });
@@ -39,17 +42,21 @@ exports.getProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { title, price, description, imageUrl } = req.body;
+    const { title, price, description } = req.body;
     const product = await Product.findByIdAndUpdate(
         id,
         {
             title,
             price,
             description,
-            imageUrl,
         },
         { new: true }
     );
+    const imgs = req.files.map((f) => ({
+        url: f.path,
+        filename: f.filename,
+    }));
+    product.images.push(...imgs);
     await product.save();
     res.status(200).json({ message: 'Product updated successfully', product });
 };
@@ -57,5 +64,10 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findByIdAndDelete(id);
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const prod of Object.values(product.images)) {
+        await cloudinary.uploader.destroy(prod.filename);
+    }
+
     res.status(200).json({ message: 'Product deleted successfully', product });
 };
