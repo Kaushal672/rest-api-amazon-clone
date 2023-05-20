@@ -13,13 +13,14 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-    const { title, description, price, imageUrl } = req.body;
+    console.log('Inside controller');
+    const { title, description, price } = req.body;
     const product = new Product({
         title,
         description,
         price,
-        imageUrl,
     });
+    product.imageUrl = req.files[0].path;
 
     await product.save();
     res.status(201).json({ message: 'Product added successfully', product });

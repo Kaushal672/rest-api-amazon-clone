@@ -1,11 +1,15 @@
+if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line global-require
+    require('dotenv').config();
+}
 const express = require('express');
 const mongoose = require('mongoose');
 const productsRoute = require('./routes/products');
-require('dotenv').config();
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/products', productsRoute);
 
 app.use((err, req, res, _next) => {
