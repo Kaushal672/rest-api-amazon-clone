@@ -13,6 +13,7 @@ router
 router
     .route('/:id')
     .get(catchAsync(productController.getProduct))
-    .put(catchAsync(productController.updateProduct));
+    .put(catchAsync(productController.updateProduct))
+    .delete(catchAsync(productController.deleteProduct));
 
 module.exports = router;
