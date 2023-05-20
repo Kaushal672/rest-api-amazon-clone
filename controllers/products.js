@@ -35,3 +35,20 @@ exports.getProduct = async (req, res) => {
     }
     res.status(200).json({ product });
 };
+
+exports.updateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { title, price, description, imageUrl } = req.body;
+    const product = await Product.findByIdAndUpdate(
+        id,
+        {
+            title,
+            price,
+            description,
+            imageUrl,
+        },
+        { new: true }
+    );
+    await product.save();
+    res.status(200).json({ message: 'Product updated successfully', product });
+};
