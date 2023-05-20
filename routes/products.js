@@ -10,4 +10,6 @@ router
     .get(catchAsync(productController.getProducts))
     .post(catchAsync(productController.addProduct));
 
+router.route('/:id').get(catchAsync(productController.getProduct));
+
 module.exports = router;

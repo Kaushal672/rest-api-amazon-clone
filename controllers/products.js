@@ -24,3 +24,14 @@ exports.addProduct = async (req, res) => {
     await product.save();
     res.status(201).json({ message: 'Product added successfully', product });
 };
+
+exports.getProduct = async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+        const error = new Error('Post could not be found');
+        error.statusCode = 404;
+        throw error;
+    }
+    res.status(200).json({ product });
+};
