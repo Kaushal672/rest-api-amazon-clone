@@ -27,8 +27,10 @@ const productSchema = new Schema(
             required: true,
         },
         discount: {
-            type: String,
+            type: Number,
             required: true,
+            min: 0,
+            max: 100,
         },
         offer: String,
     },
