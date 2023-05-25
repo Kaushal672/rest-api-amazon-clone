@@ -22,6 +22,15 @@ const productSchema = new Schema(
             type: Number,
             min: 0,
         },
+        category: {
+            type: String,
+            required: true,
+        },
+        discount: {
+            type: String,
+            required: true,
+        },
+        offer: String,
     },
     { timestamps: true }
 );
