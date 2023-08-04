@@ -1,27 +1,29 @@
 const express = require('express');
-const multer = require('multer');
-const { storage } = require('../cloudinary/index');
 
 const catchAsync = require('../utils/catchAsync');
-
-const upload = multer({
-    storage,
-    limits: { fileSize: 4e6, files: 3 },
-});
+const { productValidators } = require('../utils/validators');
 
 const router = express.Router();
 
 const productController = require('../controllers/products');
+const isAuth = require('../middleware/isAuth');
 
 router
     .route('/')
     .get(catchAsync(productController.getProducts))
-    .post(upload.array('image'), catchAsync(productController.addProduct));
+    .post(isAuth, productValidators, catchAsync(productController.addProduct))
+    .delete(isAuth, catchAsync(productController.deleteImage));
+
+router
+    .route('/cart')
+    .get(isAuth, catchAsync(productController.getCart))
+    .post(isAuth, catchAsync(productController.addToCart))
+    .delete(isAuth, catchAsync(productController.removeFromCart));
 
 router
     .route('/:id')
     .get(catchAsync(productController.getProduct))
-    .put(upload.array('image'), catchAsync(productController.updateProduct))
-    .delete(catchAsync(productController.deleteProduct));
+    .put(isAuth, productValidators, catchAsync(productController.updateProduct))
+    .delete(isAuth, catchAsync(productController.deleteProduct));
 
 module.exports = router;
