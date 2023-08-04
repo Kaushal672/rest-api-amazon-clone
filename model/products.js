@@ -39,6 +39,12 @@ const productSchema = new Schema(
             max: [100, 'Discount must be lesser or equal to 100'],
         },
         offer: String,
+        seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        formattedPrice: Number,
+        rating: {
+            reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+            overallRating: { type: Number, default: 0 },
+        },
     },
 
     { timestamps: true }
