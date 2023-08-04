@@ -102,4 +102,13 @@ exports.deleteProduct = async (req, res) => {
         product,
     });
 };
+
+exports.deleteImage = async (req, res) => {
+    const { files } = req.body;
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const { filename } of JSON.parse(files)) {
+        await cloudinary.uploader.destroy(filename);
+    }
+    res.status(200).json({ message: 'Deleted Images' });
+};
 };
