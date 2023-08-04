@@ -1,6 +1,16 @@
 /* eslint-disable no-underscore-dangle */
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const path = require('path');
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
 const { checkValidationErrors } = require('../utils/validators');
+const {
+    generateCustomerInformation,
+    generateFooter,
+    generateHeader,
+    generatePriceTable,
+    savePdfToFile,
+} = require('../utils/createPdf');
 const User = require('../model/users');
 const Product = require('../model/products');
 const { Cart } = require('../model/cart');
@@ -272,5 +282,74 @@ exports.postOrders = async (req, res) => {
     });
 
     res.status(200).json({ url: session.url });
+};
+
+exports.getCheckoutSuccess = async (req, res) => {
+    const sessionId = req.query.session_id;
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const customer = await stripe.customers.retrieve(session.customer);
+
+    const products = JSON.parse(customer.metadata.products);
+
+    const order = new Order({
+        products,
+        userId: customer.metadata.userId,
+        total: +customer.metadata.total,
+    });
+
+    const populatedOrder = await order.populate('products.productId', 'title');
+
+    const invoiceName = `invoice-${order._id}.pdf`;
+
+    const invoicePath = path.join(
+        __dirname,
+        '..',
+        'data',
+        'invoices',
+        invoiceName
+    );
+
+    const pdfDoc = new PDFDocument({ size: 'A4', margin: 50 });
+    pdfDoc.registerFont('Arial', 'public/fonts/arial.ttf');
+    pdfDoc.font('Arial');
+    generateHeader(pdfDoc);
+    generateCustomerInformation(
+        pdfDoc,
+        order._id.toString(),
+        JSON.parse(customer.metadata.address),
+        +customer.metadata.total
+    );
+    generatePriceTable(pdfDoc, populatedOrder, +customer.metadata.total);
+    generateFooter(pdfDoc);
+
+    await savePdfToFile(pdfDoc, invoicePath);
+
+    const invoice = await cloudinary.uploader.upload(invoicePath, {
+        resource_type: 'auto',
+        use_filename: true,
+        unique_filename: false,
+    });
+    order.invoice = {
+        filename: invoice.public_id,
+        url: invoice.url.replace('upload/', 'upload/fl_attachment/'),
+    };
+
+    await order.save();
+
+    if (customer.metadata.mode === 'cart') {
+        await Cart.updateOne(
+            { userId: customer.metadata.userId },
+            { $set: { items: [] } }
+        );
+    }
+
+    fs.unlink(invoicePath, function (err) {
+        if (err) {
+            // eslint-disable-next-line no-console
+            console.log(err);
+        }
+    });
+
+    res.redirect('http://localhost:3000/orders');
 };
 };
