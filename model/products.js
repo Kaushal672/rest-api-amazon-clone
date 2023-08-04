@@ -11,29 +11,36 @@ const productSchema = new Schema(
     {
         title: {
             type: String,
-            required: true,
+            required: [true, 'Title is not valid'],
         },
-        images: [ImageSchema],
+        images: {
+            type: [ImageSchema],
+            validate: {
+                validator: (v) =>
+                    Array.isArray(v) && v.length > 0 && v.length < 3,
+                message: 'Please upload atleast one iand at most 3 image',
+            },
+        },
         description: {
             type: String,
-            required: true,
+            required: [true, 'Description is not valid'],
         },
         price: {
             type: Number,
-            min: 0,
+            min: [0, 'Price must be greater or equal to zero'],
         },
         category: {
             type: String,
-            required: true,
+            required: [true, 'Category is not valid'],
         },
         discount: {
             type: Number,
-            required: true,
-            min: 0,
-            max: 100,
+            min: [0, 'Discount must be greater or equal to 0'],
+            max: [100, 'Discount must be lesser or equal to 100'],
         },
         offer: String,
     },
+
     { timestamps: true }
 );
 
