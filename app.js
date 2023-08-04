@@ -9,6 +9,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const productsRoute = require('./routes/products');
+const authRoute = require('./routes/users');
+const reviewRoute = require('./routes/reviews');
 
 const app = express();
 
@@ -17,19 +19,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader(
         'Access-Control-Allow-Methods',
         'GET, POST, PUT, PATCH, DELETE, OPTIONS'
     );
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'Content-Type, Authorization '
+        'Content-Type, Authorization'
     );
     next();
 });
 
+app.use('/auth', authRoute);
 app.use('/products', productsRoute);
+app.use('/products/:id/reviews', reviewRoute);
 
 app.use((err, req, res, _next) => {
     const { statusCode = 500 } = err;
