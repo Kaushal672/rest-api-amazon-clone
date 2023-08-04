@@ -1,5 +1,8 @@
 const { checkValidationErrors } = require('../utils/validators');
 const Product = require('../model/products');
+const { Cart } = require('../model/cart');
+const Order = require('../model/orders');
+const Review = require('../model/reviews');
 const { cloudinary } = require('../cloudinary/index');
 const ExpressError = require('../utils/ExpressError');
 
@@ -80,11 +83,23 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findById(id);
+    if (product.seller.toString() !== req.userId)
+        throw new ExpressError('Action Denied', 403);
+
     // eslint-disable-next-line no-restricted-syntax
     for await (const prod of Object.values(product.images)) {
         await cloudinary.uploader.destroy(prod.filename);
     }
 
-    res.status(200).json({ message: 'Product deleted successfully', product });
+    await Product.deleteOne({ _id: id });
+
+    await Cart.updateMany({}, { $pull: { items: { productId: id } } });
+    await Review.deleteMany({ productId: id });
+    await Order.updateMany({}, { $pull: { products: { productId: id } } });
+    res.status(200).json({
+        message: 'Product deleted successfully',
+        product,
+    });
+};
 };
