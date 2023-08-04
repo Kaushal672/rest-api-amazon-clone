@@ -1,5 +1,7 @@
+const { checkValidationErrors } = require('../utils/validators');
 const Product = require('../model/products');
 const { cloudinary } = require('../cloudinary/index');
+const ExpressError = require('../utils/ExpressError');
 
 exports.getProducts = async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -8,19 +10,26 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-    const { title, description, price } = req.body;
+    checkValidationErrors(req);
+    const { title, description, price, discount, category, images } = req.body;
+    const user = await User.findById(req.userId);
+    if (!user.company)
+        throw new ExpressError('You are not a seller on Amazon.', 403);
     const product = new Product({
         title,
         description,
         price,
+        discount,
+        category,
+        images: JSON.parse(images),
+        seller: req.userId,
     });
-    product.images = req.files.map((f) => ({
-        url: f.path,
-        filename: f.filename,
-    }));
-
     await product.save();
-    res.status(201).json({ message: 'Product added successfully', product });
+
+    res.status(201).json({
+        message: 'Product added successfully',
+        product,
+    });
 };
 
 exports.getProduct = async (req, res) => {
