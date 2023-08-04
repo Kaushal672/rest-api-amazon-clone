@@ -14,6 +14,8 @@ router
     .post(isAuth, productValidators, catchAsync(productController.addProduct))
     .delete(isAuth, catchAsync(productController.deleteImage));
 
+router.get('/search', catchAsync(productController.searchProducts));
+
 router
     .route('/cart')
     .get(isAuth, catchAsync(productController.getCart))
