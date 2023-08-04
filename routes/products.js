@@ -21,6 +21,13 @@ router
     .delete(isAuth, catchAsync(productController.removeFromCart));
 
 router
+    .route('/orders')
+    .get(isAuth, catchAsync(productController.getOrders))
+    .post(isAuth, catchAsync(productController.postOrders));
+
+router.route('/checkout').get(catchAsync(productController.getCheckoutSuccess));
+
+router
     .route('/:id')
     .get(catchAsync(productController.getProduct))
     .put(isAuth, productValidators, catchAsync(productController.updateProduct))
