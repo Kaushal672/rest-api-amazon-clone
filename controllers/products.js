@@ -55,24 +55,27 @@ exports.getProduct = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
+    checkValidationErrors(req);
     const { id } = req.params;
-    const { title, price, description } = req.body;
+    const { title, description, price, discount, category, images } = req.body;
     const product = await Product.findByIdAndUpdate(
         id,
         {
             title,
             price,
             description,
+            discount,
+            category,
+            images: JSON.parse(images),
         },
         { new: true }
     );
-    const imgs = req.files.map((f) => ({
-        url: f.path,
-        filename: f.filename,
-    }));
-    product.images.push(...imgs);
     await product.save();
-    res.status(200).json({ message: 'Product updated successfully', product });
+
+    res.status(200).json({
+        message: 'Product updated successfully',
+        product,
+    });
 };
 
 exports.deleteProduct = async (req, res) => {
