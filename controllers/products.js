@@ -352,4 +352,21 @@ exports.getCheckoutSuccess = async (req, res) => {
 
     res.redirect('http://localhost:3000/orders');
 };
+
+exports.searchProducts = async (req, res) => {
+    const { q, category } = req.query;
+    const regex = new RegExp(escapeRegex(q), 'gi');
+
+    const query = {
+        $text: { $search: regex },
+    };
+
+    if (category !== 'All') {
+        const catRgx = new RegExp(escapeRegex(escapeRegex(category)), 'i');
+        query.category = catRgx;
+    }
+
+    const products = await Product.find(query);
+
+    res.status(200).json({ products, query: q });
 };
