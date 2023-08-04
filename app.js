@@ -37,10 +37,17 @@ app.use('/products', productsRoute);
 app.use('/products/:id/reviews', reviewRoute);
 
 app.use((err, req, res, _next) => {
-    const { statusCode = 500 } = err;
-    // eslint-disable-next-line no-param-reassign
+    if (err.name === 'ValidationError') err.statusCode = 422;
+    if (err.name === 'MongoServerError' && err.code === 11000) {
+        err.statusCode = 422;
+        err.message = `${Object.entries(err.keyValue)[0][0]} (${
+            Object.entries(err.keyValue)[0][1]
+        }) already exists!`;
+    }
+    const { statusCode = 500, data = [] } = err;
+
     if (!err.message) err.message = 'Something went wrong, Try again!';
-    res.status(statusCode).json({ message: err.message });
+    res.status(statusCode).json({ message: err.message, data });
 });
 
 async function main() {
