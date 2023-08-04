@@ -111,4 +111,47 @@ exports.deleteImage = async (req, res) => {
     }
     res.status(200).json({ message: 'Deleted Images' });
 };
+
+exports.getCart = async (req, res) => {
+    const cart = await Cart.findOne({ userId: req.userId }).populate(
+        'items.productId'
+    );
+
+    if (!cart) throw new ExpressError('Cart not found', 404);
+
+    const total = cart.items.reduce(
+        (tot, cur) => tot + cur.price * cur.quantity,
+        0
+    );
+
+    res.status(200).json({ cart: { ...cart._doc, total } });
+};
+
+exports.addToCart = async (req, res) => {
+    const { productId, quantity = 1, replace } = req.body;
+
+    const product = await Product.findById(productId);
+    if (!product) throw new ExpressError('Product not found.', 404);
+
+    const cart = await Cart.findOne({ userId: req.userId });
+
+    if (!cart) throw new ExpressError('Cart not found', 404);
+
+    await cart.addToCart(productId, quantity, product.formattedPrice, replace);
+
+    res.status(200).json({ message: 'Successfully added to cart.' });
+};
+
+exports.removeFromCart = async (req, res) => {
+    const { productId } = req.body;
+
+    const cart = await Cart.findOne({ userId: req.userId });
+
+    if (!cart) throw new ExpressError('Cart not found', 404);
+
+    await cart.removeFromCart(productId);
+
+    res.status(200).json({ message: 'Successfully removed from cart.' });
+};
+
 };
