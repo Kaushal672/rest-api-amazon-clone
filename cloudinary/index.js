@@ -11,11 +11,8 @@ const storage = new CloudinaryStorage({
     cloudinary,
     params: {
         folder: 'Amazon-Products',
-        allowedFormats: ['jpeg', 'png', 'jpg'],
+        allowedFormats: ['jpeg', 'png', 'jpg', 'pdf'],
     },
 });
 
-module.exports = {
-    cloudinary,
-    storage,
-};
+module.exports = { cloudinary, storage };
