@@ -1,10 +1,14 @@
+/* eslint-disable no-underscore-dangle */
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { checkValidationErrors } = require('../utils/validators');
+const User = require('../model/users');
 const Product = require('../model/products');
 const { Cart } = require('../model/cart');
 const Order = require('../model/orders');
 const Review = require('../model/reviews');
 const { cloudinary } = require('../cloudinary/index');
 const ExpressError = require('../utils/ExpressError');
+const { escapeRegex } = require('../utils/helper');
 
 exports.getProducts = async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -154,4 +158,119 @@ exports.removeFromCart = async (req, res) => {
     res.status(200).json({ message: 'Successfully removed from cart.' });
 };
 
+exports.getOrders = async (req, res) => {
+    const orders = await Order.find({ userId: req.userId })
+        .sort({
+            createdAt: -1,
+        })
+        .limit(10)
+        .populate('products.productId');
+
+    if (!orders) throw new ExpressError('Orders not found', 404);
+
+    res.status(200).json({ orders });
+};
+
+exports.postOrders = async (req, res) => {
+    const { productId, mode } = req.body;
+    const user = await User.findById(req.userId);
+    const address = user.addresses.find((addr) => addr.default);
+
+    if (!address) throw new ExpressError('No default address found!', 403);
+
+    let order;
+    let products;
+    let total;
+    if (mode === 'cart') {
+        order = await Cart.findOne(
+            { userId: req.userId },
+            {
+                _id: 0,
+                'items.productId': 1,
+                'items.quantity': 1,
+                'items.price': 1,
+            }
+        );
+        products = order.items;
+        total = order.items.reduce(
+            (tot, cur) => tot + cur.price * cur.quantity,
+            0
+        );
+    } else {
+        const product = await Product.findById(productId);
+
+        order = {
+            items: [
+                {
+                    productId: {
+                        title: product.title,
+                        images: [{ url: product.images[0].url }],
+                    },
+                    quantity: 1,
+                    price: product.formattedPrice,
+                },
+            ],
+        };
+
+        products = [
+            {
+                productId: product._id,
+                price: product.formattedPrice,
+                quantity: 1,
+            },
+        ];
+        total = product.formattedPrice;
+    }
+
+    const customer = await stripe.customers.create({
+        metadata: {
+            userId: req.userId,
+            products: JSON.stringify(products),
+            total,
+            mode,
+            address: JSON.stringify(address),
+        },
+    });
+
+    if (mode === 'cart') {
+        order = await order.populate('items.productId', 'title images');
+    }
+
+    const session = await stripe.checkout.sessions.create({
+        line_items: order.items.map((prod) => {
+            return {
+                price_data: {
+                    currency: 'INR',
+                    product_data: {
+                        name: prod.productId.title,
+                        images: [prod.productId.images[0].url],
+                    },
+                    unit_amount: prod.price * 100,
+                },
+                quantity: prod.quantity,
+            };
+        }),
+        customer: customer.id,
+        payment_intent_data: {
+            shipping: {
+                name: address.fullName,
+                phone: `+91${address.phone}`,
+                address: {
+                    country: address.country,
+                    state: address.state,
+                    city: address.city,
+                    line1: address.addressline,
+                    postal_code: address.pincode,
+                },
+            },
+        },
+        mode: 'payment',
+        success_url: `http://localhost:8080/products/checkout?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://localhost:3000/${
+            mode === 'cart' ? 'cart' : `products/${products[0].productId}`
+        }`,
+    });
+
+    res.status(200).json({ url: session.url });
+};
 };
