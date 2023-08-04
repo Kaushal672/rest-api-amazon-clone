@@ -34,12 +34,23 @@ exports.addProduct = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate([
+        { path: 'seller', select: 'company' },
+        {
+            path: 'rating.reviews',
+            options: { limit: 10 },
+            select: '-createdAt -updatedAt',
+            populate: {
+                path: 'author',
+                model: 'User',
+                select: 'username avatar',
+            },
+        },
+    ]);
     if (!product) {
-        const error = new Error('Post could not be found');
-        error.statusCode = 404;
-        throw error;
+        throw new ExpressError('Post could not be found', 404);
     }
+
     res.status(200).json({ product });
 };
 
