@@ -50,4 +50,15 @@ const productSchema = new Schema(
     { timestamps: true }
 );
 
+productSchema.pre('save', function (next) {
+    this.formattedPrice =
+        +Math.floor(this.price - this.price * (this.discount / 100))
+            .toString()
+            .slice(0, -1) *
+            10 +
+        9;
+    next();
+});
+
+
 module.exports = mongoose.model('Product', productSchema);
