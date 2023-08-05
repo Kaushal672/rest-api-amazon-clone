@@ -12,8 +12,17 @@ const { cloudinary } = require('../cloudinary');
 const DEFAULT_PROFILE_FILENAME = 'India Tour/default_avatar_fbyzfp.jpg';
 
 exports.signup = async (req, res) => {
+    // check if there is error and if there is delete uploaded image
+    try {
+        checkValidationErrors(req);
+    } catch (e) {
+        if (req.file) {
+            await cloudinary.uploader.destroy(req.file.filename);
+        }
+        throw e;
+    }
+
     const { email, password, phone, username } = req.body;
-    checkValidationErrors(req);
     const hashedPw = await bcrypt.hash(password, 12);
     const user = new User({
         email,
