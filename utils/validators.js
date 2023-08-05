@@ -1,6 +1,5 @@
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 const User = require('../model/users');
-const ExpressError = require('./ExpressError');
 
 const productValidators = [
     body('title')
@@ -143,13 +142,6 @@ const companyValidator = body('company')
     .withMessage('Enter a valid company.')
     .escape();
 
-const checkValidationErrors = (req) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        throw new ExpressError('Validation Failed!', 422, errors.array());
-    }
-};
-
 module.exports = {
     productValidators,
     companyValidator,
@@ -159,5 +151,4 @@ module.exports = {
     userSignupValidators,
     reviewValidators,
     passwordValidator,
-    checkValidationErrors,
 };
