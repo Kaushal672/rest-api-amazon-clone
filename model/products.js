@@ -18,7 +18,7 @@ const productSchema = new Schema(
             validate: {
                 validator: (v) =>
                     Array.isArray(v) && v.length > 0 && v.length < 3,
-                message: 'Please upload atleast one iand at most 3 image',
+                message: 'Please upload atleast one and at most 3 images.',
             },
         },
         description: {
