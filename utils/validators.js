@@ -85,7 +85,14 @@ const updatePersonalInfoValidator = [
         .isEmail()
         .withMessage('Enter a valid email.')
         .escape()
-        .normalizeEmail(),
+        .normalizeEmail()
+        .custom(async (value, { req }) => {
+            const user = await User.findOne({
+                email: value,
+                _id: { $ne: req.userId },
+            });
+            if (user) throw new Error('User already exist.');
+        }),
     body('username')
         .trim()
         .notEmpty()
@@ -126,12 +133,12 @@ const addressValidator = [
         .escape(),
     body('state')
         .trim()
-        .isLength({ min: 1, max: 20 })
+        .isLength({ min: 1, max: 30 })
         .withMessage('Enter a valid state.')
         .escape(),
     body('city')
         .trim()
-        .isLength({ min: 1, max: 20 })
+        .isLength({ min: 1, max: 30 })
         .withMessage('Enter a valid city.')
         .escape(),
 ];
