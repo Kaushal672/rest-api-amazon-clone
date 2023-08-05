@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator');
+const User = require('../model/users');
 const ExpressError = require('./ExpressError');
 
 const productValidators = [
@@ -47,7 +48,11 @@ const userSignupValidators = [
         .isEmail()
         .withMessage('Enter a valid email.')
         .escape()
-        .normalizeEmail(),
+        .normalizeEmail()
+        .custom(async (value) => {
+            const user = await User.findOne({ email: value });
+            if (user) throw new Error('User already exist.');
+        }),
     passwordValidator,
     body('phone')
         .trim()
