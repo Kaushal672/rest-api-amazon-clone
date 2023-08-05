@@ -21,8 +21,8 @@ router.get('/logout', userController.logout);
 
 router.post(
     '/signup',
-    userSignupValidators,
     upload.single('avatar'),
+    userSignupValidators,
     catchAsync(userController.signup)
 );
 
