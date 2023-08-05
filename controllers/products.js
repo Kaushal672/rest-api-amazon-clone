@@ -235,6 +235,7 @@ exports.postOrders = async (req, res) => {
             products: JSON.stringify(products),
             total,
             mode,
+            origin: req.get('origin'),
             address: JSON.stringify(address),
         },
     });
@@ -272,8 +273,10 @@ exports.postOrders = async (req, res) => {
             },
         },
         mode: 'payment',
-        success_url: `http://localhost:8080/products/checkout?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:3000/${
+        success_url: `${req.protocol}://${req.get(
+            'host'
+        )}/products/checkout?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.get('origin')}/${
             mode === 'cart' ? 'cart' : `products/${products[0].productId}`
         }`,
     });
@@ -281,7 +284,7 @@ exports.postOrders = async (req, res) => {
     res.status(200).json({ url: session.url });
 };
 
-exports.getCheckoutSuccess = async (req, res) => {
+exports.getCheckoutSuccess = async (req, res, next) => {
     const sessionId = req.query.session_id;
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const customer = await stripe.customers.retrieve(session.customer);
@@ -307,9 +310,11 @@ exports.getCheckoutSuccess = async (req, res) => {
     );
 
     const pdfDoc = new PDFDocument({ size: 'A4', margin: 50 });
+
     pdfDoc.registerFont('Arial', 'public/fonts/arial.ttf');
     pdfDoc.font('Arial');
-    generateHeader(pdfDoc);
+
+    generateHeader(pdfDoc, customer.metadata.origin);
     generateCustomerInformation(
         pdfDoc,
         order._id.toString(),
@@ -326,6 +331,7 @@ exports.getCheckoutSuccess = async (req, res) => {
         use_filename: true,
         unique_filename: false,
     });
+
     order.invoice = {
         filename: invoice.public_id,
         url: invoice.url.replace('upload/', 'upload/fl_attachment/'),
@@ -342,12 +348,11 @@ exports.getCheckoutSuccess = async (req, res) => {
 
     fs.unlink(invoicePath, function (err) {
         if (err) {
-            // eslint-disable-next-line no-console
-            console.log(err);
+            next(err);
         }
     });
 
-    res.redirect('http://localhost:3000/orders');
+    res.redirect(`${customer.metadata.origin}/orders`);
 };
 
 exports.searchProducts = async (req, res) => {

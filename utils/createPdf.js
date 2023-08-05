@@ -11,7 +11,7 @@ function generateHr(doc, y) {
         .stroke();
 }
 
-exports.generateHeader = (doc) => {
+exports.generateHeader = (doc, origin) => {
     doc.image('public/images/logo.png', 50, 45, {
         width: 100,
     })
@@ -23,7 +23,7 @@ exports.generateHeader = (doc) => {
         .text('Go to:', 450, 45)
         .fillColor('blue')
         .text('Amazon', 478, 45, {
-            link: 'http://localhost:3000/',
+            link: origin,
         })
         .moveDown();
 };
