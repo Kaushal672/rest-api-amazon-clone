@@ -7,12 +7,16 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const compression = require('compression');
 const productsRoute = require('./routes/products');
 const authRoute = require('./routes/users');
 const reviewRoute = require('./routes/reviews');
 
 const app = express();
 
+app.use(helmet());
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
