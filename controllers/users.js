@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { checkValidationErrors } = require('../utils/validators');
+
 const User = require('../model/users');
 const Product = require('../model/products');
 const { Cart } = require('../model/cart');
@@ -12,16 +12,6 @@ const { cloudinary } = require('../cloudinary');
 const DEFAULT_PROFILE_FILENAME = 'India Tour/default_avatar_fbyzfp.jpg';
 
 exports.signup = async (req, res) => {
-    // check if there is error and if there is delete uploaded image
-    try {
-        checkValidationErrors(req);
-    } catch (e) {
-        if (req.file) {
-            await cloudinary.uploader.destroy(req.file.filename);
-        }
-        throw e;
-    }
-
     const { email, password, phone, username } = req.body;
     const hashedPw = await bcrypt.hash(password, 12);
     const user = new User({
@@ -72,7 +62,6 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    checkValidationErrors(req);
     const { email, password } = req.body;
     const user = await User.findOne({ email }).populate('cart');
 
@@ -154,7 +143,6 @@ exports.refresh = async (req, res) => {
 };
 
 exports.postChangePassword = async (req, res) => {
-    checkValidationErrors(req);
     const { password } = req.body;
 
     const user = await User.findById(req.userId);
@@ -180,7 +168,6 @@ exports.postChangePassword = async (req, res) => {
 };
 
 exports.patchChangePassword = async (req, res) => {
-    checkValidationErrors(req);
     const token = req.cookies.otp_token;
 
     if (!token) throw new ExpressError('Access Denied', 403);
@@ -216,7 +203,6 @@ exports.getPersonalInfo = async (req, res) => {
 };
 
 exports.postPersonalInfo = async (req, res) => {
-    checkValidationErrors(req);
     const { email, username, phone } = req.body;
 
     const user = await User.findById(req.userId);
@@ -250,7 +236,6 @@ exports.getAddress = async (req, res) => {
 };
 
 exports.postAddress = async (req, res) => {
-    checkValidationErrors(req);
     const {
         country,
         fullName,
@@ -285,7 +270,6 @@ exports.postAddress = async (req, res) => {
 };
 
 exports.putAddress = async (req, res) => {
-    checkValidationErrors(req);
     const { country, fullName, phone, pincode, addressline, state, city, id } =
         req.body;
     const user = await User.findById(req.userId);

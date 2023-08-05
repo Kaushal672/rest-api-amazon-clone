@@ -3,7 +3,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
-const { checkValidationErrors } = require('../utils/validators');
 const {
     generateCustomerInformation,
     generateFooter,
@@ -27,7 +26,6 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-    checkValidationErrors(req);
     const { title, description, price, discount, category, images } = req.body;
     const user = await User.findById(req.userId);
     if (!user.company)
@@ -72,7 +70,6 @@ exports.getProduct = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
-    checkValidationErrors(req);
     const { id } = req.params;
     const { title, description, price, discount, category, images } = req.body;
     const product = await Product.findByIdAndUpdate(

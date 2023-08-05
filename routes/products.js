@@ -7,11 +7,17 @@ const router = express.Router();
 
 const productController = require('../controllers/products');
 const isAuth = require('../middleware/isAuth');
+const checkValidationErrors = require('../middleware/checkValidationErrors');
 
 router
     .route('/')
     .get(catchAsync(productController.getProducts))
-    .post(isAuth, productValidators, catchAsync(productController.addProduct))
+    .post(
+        isAuth,
+        productValidators,
+        checkValidationErrors,
+        catchAsync(productController.addProduct)
+    )
     .delete(isAuth, catchAsync(productController.deleteImage));
 
 router.get('/search', catchAsync(productController.searchProducts));
@@ -32,7 +38,12 @@ router.route('/checkout').get(catchAsync(productController.getCheckoutSuccess));
 router
     .route('/:id')
     .get(catchAsync(productController.getProduct))
-    .put(isAuth, productValidators, catchAsync(productController.updateProduct))
+    .put(
+        isAuth,
+        productValidators,
+        checkValidationErrors,
+        catchAsync(productController.updateProduct)
+    )
     .delete(isAuth, catchAsync(productController.deleteProduct));
 
 module.exports = router;
