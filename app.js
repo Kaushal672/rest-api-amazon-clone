@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const compression = require('compression');
+
 const productsRoute = require('./routes/products');
 const authRoute = require('./routes/users');
 const reviewRoute = require('./routes/reviews');
@@ -53,7 +54,7 @@ app.use((err, _req, res, _next) => {
 async function main() {
     await mongoose.connect(process.env.DB_URL);
     app.listen(process.env.PORT, () =>
-        console.log('App listening on port 8080')
+        console.log(`App listening on port ${process.env.PORT}`)
     );
 }
 
