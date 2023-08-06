@@ -54,7 +54,7 @@ exports.getProduct = async (req, res) => {
         {
             path: 'rating.reviews',
             options: { limit: 10 },
-            select: '-createdAt -updatedAt',
+            select: '-__v -updatedAt',
             populate: {
                 path: 'author',
                 model: 'User',
