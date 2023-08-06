@@ -50,7 +50,7 @@ const userSignupValidators = [
         .normalizeEmail()
         .custom(async (value) => {
             const user = await User.findOne({ email: value });
-            if (user) throw new Error('User already exist.');
+            if (user) throw new Error('Email already exist.');
         }),
     passwordValidator,
     body('phone')
@@ -91,7 +91,7 @@ const updatePersonalInfoValidator = [
                 email: value,
                 _id: { $ne: req.userId },
             });
-            if (user) throw new Error('User already exist.');
+            if (user) throw new Error('Email already exist.');
         }),
     body('username')
         .trim()
