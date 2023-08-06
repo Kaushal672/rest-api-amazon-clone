@@ -328,7 +328,7 @@ exports.getCheckoutSuccess = async (req, res, next) => {
 
     order.invoice = {
         filename: invoice.public_id,
-        url: invoice.url.replace('upload/', 'upload/fl_attachment/'),
+        url: invoice.secure_url.replace('upload/', 'upload/fl_attachment/'),
     };
 
     await order.save();
