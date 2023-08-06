@@ -22,11 +22,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use((_req, res, next) => {
-    res.setHeader(
-        'Access-Control-Allow-Origin',
-        'https://amazon-react-clone-ten.vercel.app'
-    );
+app.use((req, res, next) => {
+    const allowedOrigins = [
+        'https://amazon-react-clone-ten.vercel.app',
+        'https://amazon-react-clone-kaushal672.vercel.app',
+        'https://amazon-react-clone-git-main-kaushal672.vercel.app',
+    ];
+    const { origin } = req.headers;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader(
         'Access-Control-Allow-Methods',
