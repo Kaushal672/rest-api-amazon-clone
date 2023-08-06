@@ -6,8 +6,9 @@ const products = [
         price: 3000,
         images: [
             {
-                url: 'https://res.cloudinary.com/dlds2z087/image/upload/e_background_removal/f_png/v1690614222/Amazon-Products/51UhwaQXCpL._SX522__orz8cu.jpg',
-                filename: 'Amazon-Products/51UhwaQXCpL._SX522__orz8cu.jpg',
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691240859/Amazon-Products/51UhwaQXCpL._SX522__orz8cu_qkclzx.png',
+                filename:
+                    'Amazon-Products/51UhwaQXCpL._SX522__orz8cu_qkclzx.png',
             },
             {
                 url: 'https://res.cloudinary.com/dlds2z087/image/upload/e_background_removal/f_png/v1690614242/Amazon-Products/51tdhnb9hBL._SX522__f4kt1p.jpg',
@@ -23,14 +24,33 @@ const products = [
         discount: 13,
     },
     {
+        title: "Red Tape Grey Sports Shoes for Men's- Lace-Up Shoes, Perfect Walking & Running Shoes for Men",
+        description:
+            'Sole: Ethylene Vinyl Acetate. Closure: Lace-Up. Fit Type: Regular. Shoe Width: Medium. PERFORMANCE WITH COMFORT: Ideally designed for Everyday Comfort, These Sports Shoes for Men are featured with Enhanced Comfort level which makes it perfect for Walking, Running and Daily Wear. It provides Dynamic Feet support and Arch Support to your feet. SLIP-RESISTANT: It is made using High-Quality EVA Outsole featuring Slip-Resistance which negates the accidental falls or slip-ups. BETTER-TRACTION: Designed for providing Maximum On-Ground Stability and Better Traction on different surfaces by providing the Enhance Grip.',
+        price: 6699,
+        images: [
+            {
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691241292/Amazon-Products/61zyOKq6WhL._UY625__aaxoam.png',
+                filename: 'Amazon-Products/61zyOKq6WhL._UY625__aaxoam.png',
+            },
+            {
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691241287/Amazon-Products/61tO2KUYC_L._UY625__f97wuk.jpg',
+                filename: 'Amazon-Products/61tO2KUYC_L._UY625__f97wuk.jpg',
+            },
+        ],
+        offer: 'Best seller',
+        category: 'Clothing & Accessories',
+        discount: 80,
+    },
+    {
         title: 'crocs Unisex-Adult Bayaband Clog Bpk/Cpk Clog',
         description:
             'Sole: Rubber. Closure: Pull On. Shoe Width: Medium. Outer Material: Rubber. Closure Type: Slip On. Toe Style: Round Toe. Warranty Type: Manufacturer. Warranty Description: 30 days',
         price: 8000,
         images: [
             {
-                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690613806/Amazon-Products/j8tlqydzuuinxkyfeh9p.jpg',
-                filename: 'Amazon-Products/j8tlqydzuuinxkyfeh9p.jpg',
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691239930/Amazon-Products/j8tlqydzuuinxkyfeh9p_romjlk.png',
+                filename: 'Amazon-Products/j8tlqydzuuinxkyfeh9p_romjlk.png',
             },
             {
                 url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690613846/Amazon-Products/71-k9kCycgL._UX575__hu1fdd.jpg',
@@ -52,8 +72,9 @@ const products = [
         price: 189900,
         images: [
             {
-                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690611603/apple-iphone-14-pro-max-1_dybk2q.jpg',
-                filename: 'apple-iphone-14-pro-max-1_dybk2q.jpg',
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691240866/Amazon-Products/apple-iphone-14-pro-max-1_dybk2q_iixt3l.png',
+                filename:
+                    'Amazon-Products/apple-iphone-14-pro-max-1_dybk2q_iixt3l.png',
             },
             {
                 url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690611548/photo-1664478546384-d57ffe74a78c_fcrguc.jpg',
@@ -90,8 +111,9 @@ const products = [
         price: 11999,
         images: [
             {
-                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690613358/Amazon-Products/fire-boltt-phoenix-p_ayx6un.webp',
-                filename: 'Amazon-Products/fire-boltt-phoenix-p_ayx6un.webp',
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691239931/Amazon-Products/fire-boltt-phoenix-p_ayx6un_ktyact.png',
+                filename:
+                    'Amazon-Products/fire-boltt-phoenix-p_ayx6un_ktyact.png',
             },
             {
                 url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690613377/Amazon-Products/fire-boltt-phoenix-p_zlrjd2.webp',
@@ -135,8 +157,9 @@ const products = [
         price: 19999,
         images: [
             {
-                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690612904/Amazon-Products/oneplus-nord-ce-3-lite-1_u3d0bm.jpg',
-                filename: 'Amazon-Products/oneplus-nord-ce-3-lite-1_u3d0bm.jpg',
+                url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1691239932/Amazon-Products/oneplus-nord-ce-3-lite-1_u3d0bm_zdqqe9.png',
+                filename:
+                    'Amazon-Products/oneplus-nord-ce-3-lite-1_u3d0bm_zdqqe9.png',
             },
             {
                 url: 'https://res.cloudinary.com/dlds2z087/image/upload/v1690612921/Amazon-Products/oneplus-nord-ce-3-lite-2_iqjfvs.jpg',
@@ -279,11 +302,12 @@ const seedDB = async () => {
             offer: prod.offer,
             discount: prod.discount,
             category: prod.category,
-            seller: new mongoose.Types.ObjectId('64b3f0bf38b4d04adaa09889'),
+            seller: new mongoose.Types.ObjectId('64ce3fcea39f00389b3bdb03'),
         });
         await product.save();
     }
 };
+
 seedDB().then(() => {
     mongoose.connection.close();
 });
