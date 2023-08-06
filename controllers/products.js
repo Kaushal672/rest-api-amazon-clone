@@ -301,13 +301,7 @@ exports.getCheckoutSuccess = async (req, res, next) => {
 
     const invoiceName = `invoice-${order._id}.pdf`;
 
-    const invoicePath = path.join(
-        __dirname,
-        '..',
-        'data',
-        'invoices',
-        invoiceName
-    );
+    const invoicePath = path.join('/tmp', invoiceName);
 
     const pdfDoc = new PDFDocument({ size: 'A4', margin: 50 });
 
