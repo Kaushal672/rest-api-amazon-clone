@@ -102,7 +102,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    res.clearCookie('jwt_token');
+    res.clearCookie('jwt_token', { path: '/', sameSite: 'none', secure: true });
     res.status(200).json({ message: 'Successfully logged out!' });
 };
 
