@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
     const accessToken = createJSONToken(
         { username: user.username, userId: user._id.toString() },
         process.env.JWT_ACCESS_KEY,
-        '10m'
+        '30s'
     );
     const refreshToken = createJSONToken(
         { userId: user._id.toString() },
@@ -125,7 +125,7 @@ exports.refresh = async (req, res) => {
     const accessToken = createJSONToken(
         { username: user.username, userId: user._id.toString() },
         process.env.JWT_ACCESS_KEY,
-        '10m'
+        '30s'
     );
 
     // Update refresh token so the user is logged in as long as user is browsing.
