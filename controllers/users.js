@@ -50,6 +50,7 @@ exports.signup = async (req, res) => {
     res.cookie('jwt_token', refreshToken, {
         httpOnly: true,
         secure: true,
+        sameSite: 'none',
         maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -86,6 +87,7 @@ exports.login = async (req, res) => {
     res.cookie('jwt_token', refreshToken, {
         httpOnly: true,
         secure: true,
+        sameSite: 'none',
         maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -136,6 +138,7 @@ exports.refresh = async (req, res) => {
     // res.cookie('jwt_token', newRefreshToken, {
     //     httpOnly: true,
     //     secure: true,
+    // sameSite: 'none',
     //     maxAge: 24 * 60 * 60 * 1000,
     // });
 
@@ -161,6 +164,7 @@ exports.postChangePassword = async (req, res) => {
     res.cookie('otp_token', otpToken, {
         httpOnly: true,
         secure: true,
+        sameSite: 'none',
         maxAge: 10 * 60 * 1000,
     });
 
