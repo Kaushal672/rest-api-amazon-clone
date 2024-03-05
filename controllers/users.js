@@ -38,7 +38,7 @@ exports.signup = async (req, res) => {
     const accessToken = createJSONToken(
         { username: user.username, userId: user._id.toString() },
         process.env.JWT_ACCESS_KEY,
-        '10m'
+        '30s'
     );
 
     const refreshToken = createJSONToken(
