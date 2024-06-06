@@ -10,9 +10,9 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const compression = require('compression');
 
-const productsRoute = require('./routes/products');
-const authRoute = require('./routes/users');
-const reviewRoute = require('./routes/reviews');
+const productsRoute = require('../routes/products');
+const authRoute = require('../routes/users');
+const reviewRoute = require('../routes/reviews');
 
 const app = express();
 
